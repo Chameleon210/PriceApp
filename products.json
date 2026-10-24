@@ -1,0 +1,422 @@
+[
+  {
+    "id": "S01",
+    "name": "棉麻短袖襯衫",
+    "price": 1280,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S02",
+    "name": "垂墜寬褲",
+    "price": 1580,
+    "category": "當季新品",
+    "type": "褲子"
+  },
+  {
+    "id": "S03",
+    "name": "輕薄針織背心",
+    "price": 880,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S04",
+    "name": "立領防曬外套",
+    "price": 1980,
+    "category": "當季新品",
+    "type": "外套"
+  },
+  {
+    "id": "S05",
+    "name": "直筒丹寧長褲",
+    "price": 1680,
+    "category": "當季新品",
+    "type": "褲子"
+  },
+  {
+    "id": "S06",
+    "name": "柔棉落肩上衣",
+    "price": 980,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S07",
+    "name": "微光澤百褶裙",
+    "price": 1480,
+    "category": "當季新品",
+    "type": "裙裝"
+  },
+  {
+    "id": "S08",
+    "name": "口袋短版外套",
+    "price": 2280,
+    "category": "當季新品",
+    "type": "外套"
+  },
+  {
+    "id": "O01",
+    "name": "格紋長袖襯衫",
+    "price": 1180,
+    "category": "過季品",
+    "type": "上衣"
+  },
+  {
+    "id": "O02",
+    "name": "刷色牛仔短褲",
+    "price": 1080,
+    "category": "過季品",
+    "type": "褲子"
+  },
+  {
+    "id": "O03",
+    "name": "薄款連帽外套",
+    "price": 1880,
+    "category": "過季品",
+    "type": "外套"
+  },
+  {
+    "id": "O04",
+    "name": "荷葉袖洋裝",
+    "price": 1680,
+    "category": "過季品",
+    "type": "洋裝"
+  },
+  {
+    "id": "O05",
+    "name": "綁帶九分褲",
+    "price": 1380,
+    "category": "過季品",
+    "type": "褲子"
+  },
+  {
+    "id": "O06",
+    "name": "V領針織上衣",
+    "price": 980,
+    "category": "過季品",
+    "type": "上衣"
+  },
+  {
+    "id": "O07",
+    "name": "雙面穿背心",
+    "price": 1280,
+    "category": "過季品",
+    "type": "上衣"
+  },
+  {
+    "id": "P01",
+    "name": "條紋棉質T恤",
+    "price": 690,
+    "category": "促銷庫存",
+    "type": "上衣"
+  },
+  {
+    "id": "P02",
+    "name": "抽繩休閒短褲",
+    "price": 890,
+    "category": "促銷庫存",
+    "type": "褲子"
+  },
+  {
+    "id": "P03",
+    "name": "素色薄長袖上衣",
+    "price": 790,
+    "category": "促銷庫存",
+    "type": "上衣"
+  },
+  {
+    "id": "P04",
+    "name": "輕便帆布托特包",
+    "price": 590,
+    "category": "促銷庫存",
+    "type": "配件"
+  },
+  {
+    "id": "P05",
+    "name": "簡約羅紋襪組",
+    "price": 290,
+    "category": "促銷庫存",
+    "type": "配件"
+  },
+  {
+    "id": "S09",
+    "name": "棉質短版針織衫",
+    "price": 1180,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S10",
+    "name": "亞麻七分袖上衣",
+    "price": 1080,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S11",
+    "name": "落肩條紋襯衫",
+    "price": 1380,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S12",
+    "name": "高腰直筒牛仔褲",
+    "price": 1780,
+    "category": "當季新品",
+    "type": "褲子"
+  },
+  {
+    "id": "S13",
+    "name": "輕量防風外套",
+    "price": 2180,
+    "category": "當季新品",
+    "type": "外套"
+  },
+  {
+    "id": "S14",
+    "name": "A字牛仔裙",
+    "price": 1480,
+    "category": "當季新品",
+    "type": "裙裝"
+  },
+  {
+    "id": "S15",
+    "name": "俐落剪裁連身褲",
+    "price": 1980,
+    "category": "當季新品",
+    "type": "連身服"
+  },
+  {
+    "id": "S16",
+    "name": "寬版西裝外套",
+    "price": 2680,
+    "category": "當季新品",
+    "type": "外套"
+  },
+  {
+    "id": "S17",
+    "name": "細肩帶針織背心",
+    "price": 780,
+    "category": "當季新品",
+    "type": "上衣"
+  },
+  {
+    "id": "S18",
+    "name": "緞面垂墜長裙",
+    "price": 1680,
+    "category": "當季新品",
+    "type": "裙裝"
+  },
+  {
+    "id": "S19",
+    "name": "綁帶襯衫式洋裝",
+    "price": 1880,
+    "category": "當季新品",
+    "type": "洋裝"
+  },
+  {
+    "id": "S20",
+    "name": "編織皮革腰帶",
+    "price": 680,
+    "category": "當季新品",
+    "type": "配件"
+  },
+  {
+    "id": "O08",
+    "name": "復古水洗丹寧襯衫",
+    "price": 1280,
+    "category": "過季品",
+    "type": "上衣"
+  },
+  {
+    "id": "O09",
+    "name": "細肩帶碎花洋裝",
+    "price": 1580,
+    "category": "過季品",
+    "type": "洋裝"
+  },
+  {
+    "id": "O10",
+    "name": "格紋百褶中長裙",
+    "price": 1380,
+    "category": "過季品",
+    "type": "裙裝"
+  },
+  {
+    "id": "O11",
+    "name": "多口袋工裝長褲",
+    "price": 1480,
+    "category": "過季品",
+    "type": "褲子"
+  },
+  {
+    "id": "O12",
+    "name": "羊毛混紡大衣",
+    "price": 2880,
+    "category": "過季品",
+    "type": "外套"
+  },
+  {
+    "id": "O13",
+    "name": "毛呢報童帽",
+    "price": 680,
+    "category": "過季品",
+    "type": "配件"
+  },
+  {
+    "id": "O14",
+    "name": "簡約斜背小包",
+    "price": 980,
+    "category": "過季品",
+    "type": "配件"
+  },
+  {
+    "id": "O15",
+    "name": "雙色針織圍巾",
+    "price": 590,
+    "category": "過季品",
+    "type": "配件"
+  },
+  {
+    "id": "O16",
+    "name": "燈芯絨長袖襯衫",
+    "price": 1280,
+    "category": "過季品",
+    "type": "上衣"
+  },
+  {
+    "id": "O17",
+    "name": "錐形剪裁卡其褲",
+    "price": 1380,
+    "category": "過季品",
+    "type": "褲子"
+  },
+  {
+    "id": "O18",
+    "name": "鋪棉立領背心",
+    "price": 1680,
+    "category": "過季品",
+    "type": "外套"
+  },
+  {
+    "id": "O19",
+    "name": "復古方領短洋裝",
+    "price": 1480,
+    "category": "過季品",
+    "type": "洋裝"
+  },
+  {
+    "id": "O20",
+    "name": "經典低筒帆布鞋",
+    "price": 1280,
+    "category": "過季品",
+    "type": "鞋款"
+  },
+  {
+    "id": "P06",
+    "name": "基本款圓領短袖上衣",
+    "price": 490,
+    "category": "促銷庫存",
+    "type": "上衣"
+  },
+  {
+    "id": "P07",
+    "name": "彈性休閒長褲",
+    "price": 790,
+    "category": "促銷庫存",
+    "type": "褲子"
+  },
+  {
+    "id": "P08",
+    "name": "輕薄防曬連帽外套",
+    "price": 990,
+    "category": "促銷庫存",
+    "type": "外套"
+  },
+  {
+    "id": "P09",
+    "name": "棉質抽繩長裙",
+    "price": 690,
+    "category": "促銷庫存",
+    "type": "裙裝"
+  },
+  {
+    "id": "P10",
+    "name": "素面背心洋裝",
+    "price": 890,
+    "category": "促銷庫存",
+    "type": "洋裝"
+  },
+  {
+    "id": "P11",
+    "name": "小格紋短袖襯衫",
+    "price": 590,
+    "category": "促銷庫存",
+    "type": "上衣"
+  },
+  {
+    "id": "P12",
+    "name": "刷色丹寧五分褲",
+    "price": 690,
+    "category": "促銷庫存",
+    "type": "褲子"
+  },
+  {
+    "id": "P13",
+    "name": "輕便收納風衣",
+    "price": 1290,
+    "category": "促銷庫存",
+    "type": "外套"
+  },
+  {
+    "id": "P14",
+    "name": "簡約A字短裙",
+    "price": 590,
+    "category": "促銷庫存",
+    "type": "裙裝"
+  },
+  {
+    "id": "P15",
+    "name": "棉麻寬版連身褲",
+    "price": 1090,
+    "category": "促銷庫存",
+    "type": "連身服"
+  },
+  {
+    "id": "P16",
+    "name": "素色針織毛帽",
+    "price": 290,
+    "category": "促銷庫存",
+    "type": "配件"
+  },
+  {
+    "id": "P17",
+    "name": "日常帆布肩背包",
+    "price": 490,
+    "category": "促銷庫存",
+    "type": "配件"
+  },
+  {
+    "id": "P18",
+    "name": "柔軟居家短襪三入組",
+    "price": 190,
+    "category": "促銷庫存",
+    "type": "配件"
+  },
+  {
+    "id": "P19",
+    "name": "百搭薄款罩衫",
+    "price": 690,
+    "category": "促銷庫存",
+    "type": "外套"
+  },
+  {
+    "id": "P20",
+    "name": "輕量慢跑鞋",
+    "price": 990,
+    "category": "促銷庫存",
+    "type": "鞋款"
+  }
+]

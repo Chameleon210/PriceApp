@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ee">
+  <title>促銷購物車結帳試算器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #252820;
+      --muted: #73766d;
+      --line: #e8e6df;
+      --paper: #fff;
+      --canvas: #f5f3ee;
+      --green: #345744;
+      --green-dark: #263f32;
+      --green-soft: #edf3ee;
+      --orange: #b45e39;
+      --orange-soft: #fbf0e9;
+      --shadow: 0 14px 36px rgb(40 43 35 / 6%);
+      font-family: "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .page { width: min(1440px, 100%); margin: 0 auto; padding: 34px 32px 48px; }
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+    .eyebrow { margin: 0 0 7px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .16em; }
+    h1 { margin: 0; font-size: clamp(25px, 3vw, 36px); line-height: 1.2; letter-spacing: -.04em; }
+    .subtitle { margin: 9px 0 0; color: var(--muted); }
+    .privacy-note { flex: 0 0 auto; padding: 9px 13px; border: 1px solid #dfe5dd; border-radius: 999px; background: #f8faf7; color: var(--green); font-size: 12px; font-weight: 700; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(330px, .85fr); align-items: start; gap: 22px; }
+    .panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: var(--shadow); }
+    .panel-head { padding: 21px 22px 17px; border-bottom: 1px solid var(--line); }
+    .panel-title-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    h2 { margin: 0; font-size: 19px; letter-spacing: -.02em; }
+    .count { color: var(--muted); font-size: 13px; }
+    .filters { display: grid; grid-template-columns: minmax(160px, 1fr) 155px 125px; gap: 10px; margin-top: 16px; }
+    .control { width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid #deded7; border-radius: 10px; background: #fff; color: var(--ink); outline: none; }
+    .control:focus, .qty-input:focus { border-color: #6f9178; box-shadow: 0 0 0 3px rgb(75 116 88 / 12%); }
+    .product-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; max-height: 690px; overflow: auto; padding: 17px; }
+    .product-card { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 13px; background: #fff; transition: border-color .15s, transform .15s; }
+    .product-card:hover { transform: translateY(-1px); border-color: #c9d5ca; }
+    .product-top { display: flex; justify-content: space-between; gap: 10px; }
+    .product-name { margin: 0; font-size: 15px; font-weight: 750; }
+    .product-id { flex: 0 0 auto; color: #96988f; font-size: 11px; font-variant-numeric: tabular-nums; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .tag { padding: 3px 8px; border-radius: 999px; background: #f1f1ed; color: #66695f; font-size: 11px; font-weight: 650; }
+    .tag.promo { background: var(--orange-soft); color: #985132; }
+    .tag.season { background: var(--green-soft); color: var(--green); }
+    .product-prices { display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px 10px; margin-top: 12px; }
+    .original-price { color: #96988f; font-size: 12px; text-decoration: line-through; }
+    .unit-price { color: var(--green-dark); font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .discount-label { color: var(--orange); font-size: 12px; font-weight: 750; }
+    .add-row { display: flex; gap: 8px; margin-top: 12px; }
+    .qty-input { width: 66px; min-height: 38px; padding: 7px; border: 1px solid #deded7; border-radius: 9px; text-align: center; outline: none; }
+    .button { min-height: 38px; padding: 8px 12px; border: 0; border-radius: 9px; font-weight: 750; transition: background .15s, transform .15s; }
+    .button:active { transform: scale(.98); }
+    .button-primary { flex: 1; background: var(--green); color: #fff; }
+    .button-primary:hover { background: var(--green-dark); }
+    .button-quiet { background: #f3f2ee; color: #56594f; }
+    .button-quiet:hover { background: #eae9e2; }
+    .cart-panel { position: sticky; top: 18px; }
+    .cart-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .cart-items { display: grid; gap: 0; max-height: 370px; overflow: auto; padding: 0 20px; }
+    .empty-state { padding: 30px 10px; color: var(--muted); text-align: center; }
+    .empty-icon { display: grid; width: 42px; height: 42px; place-items: center; margin: 0 auto 10px; border-radius: 50%; background: var(--green-soft); color: var(--green); font-size: 19px; font-weight: 800; }
+    .cart-item { padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .cart-item:last-child { border-bottom: 0; }
+    .cart-item-top { display: flex; justify-content: space-between; gap: 12px; }
+    .cart-item-name { margin: 0; font-weight: 750; }
+    .cart-item-meta { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .remove-button { padding: 2px 5px; border: 0; background: transparent; color: #a16b58; font-size: 12px; }
+    .remove-button:hover { color: #803f2c; text-decoration: underline; }
+    .cart-item-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 11px; }
+    .quantity-control { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; }
+    .quantity-control .qty-input { width: 62px; min-height: 34px; padding: 5px; color: var(--ink); font-size: 14px; }
+    .line-total { color: var(--green-dark); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .summary { padding: 18px 21px 21px; border-top: 1px solid var(--line); background: #fcfcfa; }
+    .summary-title { margin: 0 0 13px; font-size: 15px; }
+    .summary-row { display: flex; justify-content: space-between; gap: 14px; margin: 9px 0; color: #55584f; font-size: 13px; }
+    .summary-row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+    .checkout-tier { margin: 13px 0; padding: 10px 11px; border-radius: 10px; background: var(--green-soft); color: var(--green-dark); font-size: 12px; }
+    .checkout-tier strong { font-size: 13px; }
+    .payable { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #d8d9d0; }
+    .payable-label { font-weight: 800; }
+    .payable-amount { color: var(--green-dark); font-size: 30px; font-weight: 850; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+    .helper { margin: 12px 0 0; color: var(--muted); font-size: 11px; }
+    .rules { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+    .rule-chip { padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: #66695f; font-size: 11px; }
+    .no-results { grid-column: 1 / -1; padding: 40px 10px; color: var(--muted); text-align: center; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 960px) {
+      .page { padding: 26px 20px 36px; }
+      .layout { grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); gap: 15px; }
+      .product-list { grid-template-columns: 1fr; max-height: 660px; }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .filters input { grid-column: 1 / -1; }
+    }
+    @media (max-width: 700px) {
+      .page { padding: 20px 13px 28px; }
+      .topbar { display: block; margin-bottom: 19px; }
+      .privacy-note { display: inline-block; margin-top: 13px; }
+      .layout { grid-template-columns: 1fr; }
+      .cart-panel { position: static; grid-row: 1; }
+      .cart-items { max-height: 340px; }
+      .product-list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: none; }
+      .panel-head { padding: 17px; }
+      .filters { grid-template-columns: 1fr 1fr; gap: 8px; }
+    }
+    @media (max-width: 430px) {
+      .product-list { grid-template-columns: 1fr; padding: 12px; }
+      .filters { grid-template-columns: 1fr; }
+      .filters input { grid-column: auto; }
+      .payable-amount { font-size: 27px; }
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at 8% 0%, rgb(224 233 222 / 70%), transparent 32rem),
+        var(--canvas);
+    }
+    .page { width: min(1480px, 100%); padding-top: 28px; }
+    .topbar {
+      position: relative;
+      overflow: hidden;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 27px 32px;
+      border-radius: 22px;
+      background: linear-gradient(115deg, #294b3b, #3b624d 68%, #55765d);
+      box-shadow: 0 16px 36px rgb(38 63 50 / 16%);
+    }
+    .topbar::after {
+      position: absolute;
+      top: -110px;
+      right: 12%;
+      width: 290px;
+      height: 290px;
+      border: 1px solid rgb(255 255 255 / 12%);
+      border-radius: 50%;
+      box-shadow: 0 0 0 34px rgb(255 255 255 / 4%), 0 0 0 70px rgb(255 255 255 / 3%);
+      content: "";
+      pointer-events: none;
+    }
+    .topbar > div { position: relative; z-index: 1; }
+    .eyebrow { color: #c6d8c8; }
+    h1 { color: #fff; }
+    .subtitle { color: #e0e9e1; }
+    .privacy-note {
+      border-color: rgb(255 255 255 / 24%);
+      background: rgb(255 255 255 / 10%);
+      color: #f4f7f2;
+      backdrop-filter: blur(8px);
+    }
+    .layout { gap: 20px; }
+    .panel { border-color: #e6e4dc; border-radius: 19px; }
+    .panel-head { padding: 20px 22px 18px; }
+    h2 { font-size: 18px; }
+    .filters { margin-top: 15px; }
+    .control { background-color: #fcfcfa; }
+    .product-list { gap: 13px; padding: 16px; }
+    .product-card {
+      overflow: hidden;
+      padding: 9px;
+      border-color: #eeece5;
+      border-radius: 15px;
+      background: #fff;
+      box-shadow: 0 3px 10px rgb(35 44 34 / 3%);
+      transition: border-color .18s, box-shadow .18s, transform .18s;
+    }
+    .product-card:hover {
+      transform: translateY(-2px);
+      border-color: #c5d5c8;
+      box-shadow: 0 9px 22px rgb(35 60 42 / 9%);
+    }
+    .product-visual {
+      position: relative;
+      display: grid;
+      height: 108px;
+      overflow: hidden;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #e9eee6, #f4f1e9);
+    }
+    .product-visual::before,
+    .product-visual::after {
+      position: absolute;
+      border: 1px solid rgb(65 91 68 / 9%);
+      border-radius: 50%;
+      content: "";
+      pointer-events: none;
+    }
+    .product-visual::before { top: -43px; right: -14px; width: 132px; height: 132px; }
+    .product-visual::after { right: 24px; bottom: -67px; width: 126px; height: 126px; }
+    .product-card[data-category="過季品"] .product-visual {
+      background: linear-gradient(135deg, #f2e9df, #f7f1e9);
+    }
+    .product-card[data-category="促銷庫存"] .product-visual {
+      background: linear-gradient(135deg, #f7e9de, #faf2e9);
+    }
+    .product-icon {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 68px;
+      height: 68px;
+      place-items: center;
+      border: 1px solid rgb(255 255 255 / 90%);
+      border-radius: 22px;
+      background: rgb(255 255 255 / 76%);
+      box-shadow: 0 8px 22px rgb(45 53 42 / 9%);
+      font-size: 37px;
+      line-height: 1;
+      transform: rotate(-4deg);
+    }
+    .visual-code {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      color: rgb(53 74 58 / 52%);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+    .product-details { padding: 11px 5px 4px; }
+    .product-name { font-size: 14px; }
+    .product-id { display: none; }
+    .tag-row { gap: 5px; margin-top: 8px; }
+    .tag { padding: 3px 7px; }
+    .product-prices { gap: 4px 8px; margin-top: 10px; }
+    .unit-price { font-size: 17px; }
+    .discount-label {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #fbf0e9;
+      color: #a45131;
+      font-size: 11px;
+    }
+    .add-row { margin-top: 10px; }
+    .button-primary { box-shadow: 0 3px 8px rgb(52 87 68 / 15%); }
+    .button:focus-visible, .remove-button:focus-visible {
+      outline: 3px solid rgb(94 137 102 / 40%);
+      outline-offset: 2px;
+    }
+    .cart-panel { box-shadow: 0 14px 38px rgb(40 43 35 / 8%); }
+    .cart-items { padding: 0 19px; }
+    .cart-item-identity { display: flex; min-width: 0; align-items: center; gap: 10px; }
+    .cart-item-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 12px;
+      background: #edf2eb;
+      font-size: 22px;
+    }
+    .cart-item-copy { min-width: 0; }
+    .cart-item-name { font-size: 14px; }
+    .cart-item-meta { line-height: 1.65; }
+    .summary { background: linear-gradient(180deg, #fcfcfa, #f8f8f4); }
+    .checkout-tier { border: 1px solid #e1eade; }
+    .payable-amount { font-size: 28px; }
+
+    @media (max-width: 960px) {
+      .page { padding-top: 22px; }
+      .topbar { padding: 24px; }
+    }
+    @media (max-width: 700px) {
+      .page { padding: 14px 12px 24px; }
+      .topbar { padding: 22px 20px; border-radius: 18px; }
+      .topbar::after { right: -100px; }
+      .cart-panel { grid-row: 1; }
+      .product-list { gap: 10px; padding: 12px; }
+      .product-visual { height: 92px; }
+      .product-icon { width: 60px; height: 60px; font-size: 33px; }
+    }
+    @media (max-width: 430px) {
+      .product-card { padding: 8px; }
+      .product-visual { height: 106px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">CHECKOUT ESTIMATOR</p>
+        <h1>促銷購物車結帳試算器</h1>
+        <p class="subtitle">挑選商品、調整數量，立即掌握折扣與應付金額。</p>
+      </div>
+      <div class="privacy-note">僅使用虛構商品・資料留在此裝置</div>
+    </header>
+
+    <div class="layout">
+      <section class="panel" aria-labelledby="products-title">
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <h2 id="products-title">挑選商品</h2>
+            <span class="count" id="product-count"></span>
+          </div>
+          <div class="filters">
+            <label class="sr-only" for="search">搜尋商品名稱或編號</label>
+            <input class="control" id="search" type="search" placeholder="搜尋商品名稱或編號">
+            <label class="sr-only" for="category-filter">依商品分類篩選</label>
+            <select class="control" id="category-filter">
+              <option value="">全部促銷分類</option>
+              <option value="當季新品">當季新品</option>
+              <option value="過季品">過季品</option>
+              <option value="促銷庫存">促銷庫存</option>
+            </select>
+            <label class="sr-only" for="type-filter">依商品類型篩選</label>
+            <select class="control" id="type-filter"><option value="">全部商品類型</option></select>
+          </div>
+        </div>
+        <div class="product-list" id="product-list" aria-live="polite"></div>
+      </section>
+
+      <aside class="panel cart-panel" aria-labelledby="cart-title">
+        <div class="panel-head">
+          <div class="cart-heading">
+            <h2 id="cart-title">購物車</h2>
+            <button class="button button-quiet" id="clear-cart" type="button">清空購物車</button>
+          </div>
+          <span class="count" id="cart-count">目前 0 項商品</span>
+        </div>
+        <div class="cart-items" id="cart-items" aria-live="polite"></div>
+        <section class="summary" aria-labelledby="summary-title">
+          <h3 class="summary-title" id="summary-title">結帳摘要</h3>
+          <div class="summary-row"><span>原價合計</span><strong id="original-total">NT$ 0</strong></div>
+          <div class="summary-row"><span>折後商品小計</span><strong id="discounted-subtotal">NT$ 0</strong></div>
+          <div class="checkout-tier" id="checkout-tier">尚未達結帳折扣門檻</div>
+          <div class="summary-row"><span>結帳折抵金額</span><strong id="checkout-savings">− NT$ 0</strong></div>
+          <div class="payable"><span class="payable-label">最後應付金額</span><strong class="payable-amount" id="payable-total">NT$ 0</strong></div>
+          <p class="helper">先計算各商品分類折扣，再依折後商品小計套用單一最高結帳折扣；應付金額四捨五入至整數元。</p>
+          <div class="rules" aria-label="商品與結帳折扣規則">
+            <span class="rule-chip">當季新品 原價</span>
+            <span class="rule-chip">過季品 8 折</span>
+            <span class="rule-chip">促銷庫存 6 折</span>
+            <span class="rule-chip">滿 1,000 元 95 折</span>
+            <span class="rule-chip">滿 2,000 元 88 折</span>
+            <span class="rule-chip">滿 3,000 元 8 折</span>
+            <span class="rule-chip">滿 5,000 元 75 折</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script id="products-data" type="application/json">
+[
+  {"id":"S01","name":"棉麻短袖襯衫","price":1280,"category":"當季新品","type":"上衣"},
+  {"id":"S02","name":"垂墜寬褲","price":1580,"category":"當季新品","type":"褲子"},
+  {"id":"S03","name":"輕薄針織背心","price":880,"category":"當季新品","type":"上衣"},
+  {"id":"S04","name":"立領防曬外套","price":1980,"category":"當季新品","type":"外套"},
+  {"id":"S05","name":"直筒丹寧長褲","price":1680,"category":"當季新品","type":"褲子"},
+  {"id":"S06","name":"柔棉落肩上衣","price":980,"category":"當季新品","type":"上衣"},
+  {"id":"S07","name":"微光澤百褶裙","price":1480,"category":"當季新品","type":"裙裝"},
+  {"id":"S08","name":"口袋短版外套","price":2280,"category":"當季新品","type":"外套"},
+  {"id":"O01","name":"格紋長袖襯衫","price":1180,"category":"過季品","type":"上衣"},
+  {"id":"O02","name":"刷色牛仔短褲","price":1080,"category":"過季品","type":"褲子"},
+  {"id":"O03","name":"薄款連帽外套","price":1880,"category":"過季品","type":"外套"},
+  {"id":"O04","name":"荷葉袖洋裝","price":1680,"category":"過季品","type":"洋裝"},
+  {"id":"O05","name":"綁帶九分褲","price":1380,"category":"過季品","type":"褲子"},
+  {"id":"O06","name":"V領針織上衣","price":980,"category":"過季品","type":"上衣"},
+  {"id":"O07","name":"雙面穿背心","price":1280,"category":"過季品","type":"上衣"},
+  {"id":"P01","name":"條紋棉質T恤","price":690,"category":"促銷庫存","type":"上衣"},
+  {"id":"P02","name":"抽繩休閒短褲","price":890,"category":"促銷庫存","type":"褲子"},
+  {"id":"P03","name":"素色薄長袖上衣","price":790,"category":"促銷庫存","type":"上衣"},
+  {"id":"P04","name":"輕便帆布托特包","price":590,"category":"促銷庫存","type":"配件"},
+  {"id":"P05","name":"簡約羅紋襪組","price":290,"category":"促銷庫存","type":"配件"},
+  {"id":"S09","name":"棉質短版針織衫","price":1180,"category":"當季新品","type":"上衣"},
+  {"id":"S10","name":"亞麻七分袖上衣","price":1080,"category":"當季新品","type":"上衣"},
+  {"id":"S11","name":"落肩條紋襯衫","price":1380,"category":"當季新品","type":"上衣"},
+  {"id":"S12","name":"高腰直筒牛仔褲","price":1780,"category":"當季新品","type":"褲子"},
+  {"id":"S13","name":"輕量防風外套","price":2180,"category":"當季新品","type":"外套"},
+  {"id":"S14","name":"A字牛仔裙","price":1480,"category":"當季新品","type":"裙裝"},
+  {"id":"S15","name":"俐落剪裁連身褲","price":1980,"category":"當季新品","type":"連身服"},
+  {"id":"S16","name":"寬版西裝外套","price":2680,"category":"當季新品","type":"外套"},
+  {"id":"S17","name":"細肩帶針織背心","price":780,"category":"當季新品","type":"上衣"},
+  {"id":"S18","name":"緞面垂墜長裙","price":1680,"category":"當季新品","type":"裙裝"},
+  {"id":"S19","name":"綁帶襯衫式洋裝","price":1880,"category":"當季新品","type":"洋裝"},
+  {"id":"S20","name":"編織皮革腰帶","price":680,"category":"當季新品","type":"配件"},
+  {"id":"O08","name":"復古水洗丹寧襯衫","price":1280,"category":"過季品","type":"上衣"},
+  {"id":"O09","name":"細肩帶碎花洋裝","price":1580,"category":"過季品","type":"洋裝"},
+  {"id":"O10","name":"格紋百褶中長裙","price":1380,"category":"過季品","type":"裙裝"},
+  {"id":"O11","name":"多口袋工裝長褲","price":1480,"category":"過季品","type":"褲子"},
+  {"id":"O12","name":"羊毛混紡大衣","price":2880,"category":"過季品","type":"外套"},
+  {"id":"O13","name":"毛呢報童帽","price":680,"category":"過季品","type":"配件"},
+  {"id":"O14","name":"簡約斜背小包","price":980,"category":"過季品","type":"配件"},
+  {"id":"O15","name":"雙色針織圍巾","price":590,"category":"過季品","type":"配件"},
+  {"id":"O16","name":"燈芯絨長袖襯衫","price":1280,"category":"過季品","type":"上衣"},
+  {"id":"O17","name":"錐形剪裁卡其褲","price":1380,"category":"過季品","type":"褲子"},
+  {"id":"O18","name":"鋪棉立領背心","price":1680,"category":"過季品","type":"外套"},
+  {"id":"O19","name":"復古方領短洋裝","price":1480,"category":"過季品","type":"洋裝"},
+  {"id":"O20","name":"經典低筒帆布鞋","price":1280,"category":"過季品","type":"鞋款"},
+  {"id":"P06","name":"基本款圓領短袖上衣","price":490,"category":"促銷庫存","type":"上衣"},
+  {"id":"P07","name":"彈性休閒長褲","price":790,"category":"促銷庫存","type":"褲子"},
+  {"id":"P08","name":"輕薄防曬連帽外套","price":990,"category":"促銷庫存","type":"外套"},
+  {"id":"P09","name":"棉質抽繩長裙","price":690,"category":"促銷庫存","type":"裙裝"},
+  {"id":"P10","name":"素面背心洋裝","price":890,"category":"促銷庫存","type":"洋裝"},
+  {"id":"P11","name":"小格紋短袖襯衫","price":590,"category":"促銷庫存","type":"上衣"},
+  {"id":"P12","name":"刷色丹寧五分褲","price":690,"category":"促銷庫存","type":"褲子"},
+  {"id":"P13","name":"輕便收納風衣","price":1290,"category":"促銷庫存","type":"外套"},
+  {"id":"P14","name":"簡約A字短裙","price":590,"category":"促銷庫存","type":"裙裝"},
+  {"id":"P15","name":"棉麻寬版連身褲","price":1090,"category":"促銷庫存","type":"連身服"},
+  {"id":"P16","name":"素色針織毛帽","price":290,"category":"促銷庫存","type":"配件"},
+  {"id":"P17","name":"日常帆布肩背包","price":490,"category":"促銷庫存","type":"配件"},
+  {"id":"P18","name":"柔軟居家短襪三入組","price":190,"category":"促銷庫存","type":"配件"},
+  {"id":"P19","name":"百搭薄款罩衫","price":690,"category":"促銷庫存","type":"外套"},
+  {"id":"P20","name":"輕量慢跑鞋","price":990,"category":"促銷庫存","type":"鞋款"}
+]
+  </script>
+  <script>
+    "use strict";
+
+    const products = JSON.parse(document.getElementById("products-data").textContent);
+    const cart = new Map();
+    const money = amount => `NT$ ${Math.round(amount).toLocaleString("zh-TW")}`;
+    const categoryDiscount = {
+      "當季新品": { rate: 1, label: "原價" },
+      "過季品": { rate: 0.8, label: "8 折" },
+      "促銷庫存": { rate: 0.6, label: "6 折" }
+    };
+    const checkoutTiers = [
+      { threshold: 5000, rate: 0.75, label: "滿 NT$ 5,000，75 折" },
+      { threshold: 3000, rate: 0.8, label: "滿 NT$ 3,000，8 折" },
+      { threshold: 2000, rate: 0.88, label: "滿 NT$ 2,000，88 折" },
+      { threshold: 1000, rate: 0.95, label: "滿 NT$ 1,000，95 折" }
+    ];
+    const productList = document.getElementById("product-list");
+    const cartItems = document.getElementById("cart-items");
+    const categoryFilter = document.getElementById("category-filter");
+    const typeFilter = document.getElementById("type-filter");
+    const searchInput = document.getElementById("search");
+
+    function discountedUnitPrice(product) {
+      return product.price * categoryDiscount[product.category].rate;
+    }
+
+    function validQuantity(value) {
+      const quantity = Number(value);
+      return Number.isSafeInteger(quantity) && quantity > 0 ? quantity : null;
+    }
+
+    function productIcon(type) {
+      const icons = {
+        "上衣": "👕",
+        "褲子": "👖",
+        "外套": "🧥",
+        "裙裝": "👗",
+        "洋裝": "👗",
+        "連身服": "👗",
+        "配件": "👜",
+        "鞋款": "👟"
+      };
+      return icons[type] || "🛍️";
+    }
+
+    function renderTypeFilter() {
+      const selected = typeFilter.value;
+      const types = [...new Set(products.map(product => product.type))].sort();
+      typeFilter.replaceChildren(new Option("全部商品類型", ""));
+      types.forEach(type => typeFilter.add(new Option(type, type)));
+      typeFilter.value = types.includes(selected) ? selected : "";
+    }
+
+    function renderProducts() {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      const visibleProducts = products.filter(product => {
+        const matchesQuery = `${product.name} ${product.id}`.toLocaleLowerCase().includes(query);
+        return matchesQuery
+          && (!categoryFilter.value || product.category === categoryFilter.value)
+          && (!typeFilter.value || product.type === typeFilter.value);
+      });
+      document.getElementById("product-count").textContent = `顯示 ${visibleProducts.length} / ${products.length} 項`;
+      productList.replaceChildren();
+
+      if (visibleProducts.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "no-results";
+        empty.textContent = "找不到符合條件的商品，請調整搜尋或篩選條件。";
+        productList.append(empty);
+        return;
+      }
+
+      visibleProducts.forEach(product => {
+        const discount = categoryDiscount[product.category];
+        const unitPrice = discountedUnitPrice(product);
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.dataset.category = product.category;
+        card.innerHTML = `
+          <div class="product-visual" aria-hidden="true">
+            <span class="product-icon"></span>
+            <span class="visual-code"></span>
+          </div>
+          <div class="product-details">
+          <div class="product-top">
+            <h3 class="product-name"></h3>
+            <span class="product-id"></span>
+          </div>
+          <div class="tag-row">
+            <span class="tag category-tag"></span>
+            <span class="tag"></span>
+            <span class="tag promo"></span>
+          </div>
+          <div class="product-prices">
+            <span class="original-price"></span>
+            <span class="unit-price"></span>
+            <span class="discount-label"></span>
+          </div>
+          <div class="add-row">
+            <label class="sr-only">加入數量</label>
+            <input class="qty-input" type="number" min="1" step="1" value="1" inputmode="numeric" aria-label="${product.name}加入數量">
+            <button class="button button-primary" type="button">加入購物車</button>
+          </div>
+          </div>`;
+        const [categoryTag, typeTag, discountTag] = card.querySelectorAll(".tag");
+        card.querySelector(".product-icon").textContent = productIcon(product.type);
+        card.querySelector(".visual-code").textContent = product.id;
+        card.querySelector(".product-name").textContent = product.name;
+        card.querySelector(".product-id").textContent = product.id;
+        categoryTag.textContent = product.category;
+        categoryTag.classList.toggle("season", product.category === "當季新品");
+        typeTag.textContent = product.type;
+        discountTag.textContent = discount.label;
+        card.querySelector(".original-price").textContent = `原價 ${money(product.price)}`;
+        card.querySelector(".unit-price").textContent = money(unitPrice);
+        card.querySelector(".discount-label").textContent = discount.rate === 1
+          ? "不打折"
+          : `省 ${money(product.price - unitPrice)}`;
+        const quantityInput = card.querySelector("input");
+        quantityInput.addEventListener("change", () => {
+          if (validQuantity(quantityInput.value) === null) quantityInput.value = "1";
+        });
+        card.querySelector("button").addEventListener("click", () => {
+          const quantity = validQuantity(quantityInput.value);
+          if (quantity === null) {
+            quantityInput.value = "1";
+            quantityInput.focus();
+            return;
+          }
+          cart.set(product.id, (cart.get(product.id) || 0) + quantity);
+          renderCart();
+        });
+        productList.append(card);
+      });
+    }
+
+    function renderCart() {
+      const entries = [...cart.entries()];
+      cartItems.replaceChildren();
+      document.getElementById("cart-count").textContent = `目前 ${entries.length} 項商品`;
+
+      if (entries.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.innerHTML = '<div class="empty-icon" aria-hidden="true">＋</div><strong>購物車目前是空的</strong><br>請從左側商品清單加入商品。';
+        cartItems.append(empty);
+      } else {
+        entries.forEach(([productId, quantity]) => {
+          const product = products.find(item => item.id === productId);
+          if (!product) throw new Error(`購物車包含未知商品 ID：${productId}`);
+          const unitPrice = discountedUnitPrice(product);
+          const item = document.createElement("article");
+          item.className = "cart-item";
+          item.innerHTML = `
+            <div class="cart-item-top">
+              <div class="cart-item-identity">
+                <div class="cart-item-icon" aria-hidden="true"></div>
+                <div class="cart-item-copy">
+                <h3 class="cart-item-name"></h3>
+                <div class="cart-item-meta"></div>
+                </div>
+              </div>
+              <button class="remove-button" type="button">移除</button>
+            </div>
+            <div class="cart-item-bottom">
+              <label class="quantity-control">數量
+                <input class="qty-input" type="number" min="1" step="1" inputmode="numeric">
+              </label>
+              <span class="line-total"></span>
+            </div>`;
+          item.querySelector(".cart-item-icon").textContent = productIcon(product.type);
+          item.querySelector(".cart-item-name").textContent = product.name;
+          item.querySelector(".cart-item-meta").textContent =
+            `${product.category}・${product.type}・原價 ${money(product.price)}・${categoryDiscount[product.category].label}・省 ${money(product.price - unitPrice)}・折後單價 ${money(unitPrice)}`;
+          const quantityInput = item.querySelector("input");
+          quantityInput.value = String(quantity);
+          quantityInput.setAttribute("aria-label", `${product.name}購物車數量`);
+          quantityInput.addEventListener("input", () => {
+            const nextQuantity = validQuantity(quantityInput.value);
+            if (nextQuantity !== null) {
+              cart.set(productId, nextQuantity);
+              renderTotals();
+              item.querySelector(".line-total").textContent = money(unitPrice * nextQuantity);
+              document.getElementById("cart-count").textContent = `目前 ${cart.size} 項商品`;
+            }
+          });
+          quantityInput.addEventListener("change", () => {
+            const nextQuantity = validQuantity(quantityInput.value);
+            if (nextQuantity === null) {
+              quantityInput.value = String(cart.get(productId));
+              return;
+            }
+            cart.set(productId, nextQuantity);
+            renderCart();
+          });
+          item.querySelector(".line-total").textContent = money(unitPrice * quantity);
+          item.querySelector(".remove-button").addEventListener("click", () => {
+            cart.delete(productId);
+            renderCart();
+          });
+          cartItems.append(item);
+        });
+      }
+      renderTotals();
+    }
+
+    function renderTotals() {
+      let originalTotal = 0;
+      let discountedSubtotal = 0;
+      cart.forEach((quantity, productId) => {
+        const product = products.find(item => item.id === productId);
+        if (!product) throw new Error(`購物車包含未知商品 ID：${productId}`);
+        originalTotal += product.price * quantity;
+        discountedSubtotal += discountedUnitPrice(product) * quantity;
+      });
+
+      const tier = checkoutTiers.find(item => discountedSubtotal >= item.threshold);
+      const payable = Math.round(discountedSubtotal * (tier ? tier.rate : 1));
+      const checkoutSavings = discountedSubtotal - payable;
+      document.getElementById("original-total").textContent = money(originalTotal);
+      document.getElementById("discounted-subtotal").textContent = money(discountedSubtotal);
+      document.getElementById("checkout-tier").innerHTML = tier
+        ? `本次套用結帳折扣：<strong>${tier.label}</strong>`
+        : "本次套用結帳折扣：<strong>未滿 NT$ 1,000，不打折</strong>";
+      document.getElementById("checkout-savings").textContent = `− ${money(checkoutSavings)}`;
+      document.getElementById("payable-total").textContent = money(payable);
+    }
+
+    searchInput.addEventListener("input", renderProducts);
+    categoryFilter.addEventListener("change", renderProducts);
+    typeFilter.addEventListener("change", renderProducts);
+    document.getElementById("clear-cart").addEventListener("click", () => {
+      cart.clear();
+      renderCart();
+    });
+
+    renderTypeFilter();
+    renderProducts();
+    renderCart();
+  </script>
+</body>
+</html>
