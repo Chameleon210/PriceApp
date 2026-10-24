@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#43358b">
+  <meta name="description" content="加入商品、比較促銷與優惠券，即時試算 SmartCart 最優惠的結帳金額。">
+  <title>SmartCart 智慧促銷結帳試算器</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navigation page-width" aria-label="主要導覽">
+      <a class="brand" href="#top" aria-label="SmartCart 首頁">
+        <span class="brand-mark" aria-hidden="true">🛍</span>
+        <span class="brand-copy"><strong>SmartCart</strong><small>智慧促銷結帳試算器</small></span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link is-current" href="#products">商品專區</a>
+        <a class="nav-link" href="#promotion-analysis">促銷試算</a>
+        <a class="nav-link" href="#how-it-works">使用說明</a>
+      </div>
+      <div class="nav-actions">
+        <a class="nav-cart" href="#cart-panel" aria-label="前往購物車">
+          <span aria-hidden="true">🛒</span><span class="nav-cart-count" id="nav-cart-count">0</span>
+        </a>
+        <span class="user-avatar" aria-label="訪客">訪</span>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-width" id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-dot"></span>SMARTER SHOPPING STARTS HERE</span>
+        <h1 id="hero-title">找出最適合你的<br><span>優惠組合</span></h1>
+        <p>加入商品，選擇促銷活動，立即計算最終結帳金額！</p>
+        <a class="hero-cta" href="#products">開始挑選商品 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="hero-orbit orbit-one"></span><span class="hero-orbit orbit-two"></span>
+        <span class="hero-spark spark-one">✦</span><span class="hero-spark spark-two">✧</span>
+        <span class="hero-bag">🛍️</span><span class="hero-ticket">−15%</span>
+        <span class="hero-dot"></span>
+      </div>
+      <div class="hero-footnote"><span aria-hidden="true">✦</span> 即時計算・優惠透明・聰明省更多</div>
+    </section>
+
+    <div class="dashboard-layout">
+      <div class="main-column">
+        <section class="section-card catalog-card" id="products" aria-labelledby="products-title">
+          <div class="section-heading catalog-heading">
+            <div>
+              <span class="section-kicker">CURATED FOR YOU</span>
+              <h2 id="products-title"><span class="heading-icon" aria-hidden="true">🛍</span>熱門商品</h2>
+            </div>
+            <span class="muted count-label" id="product-count"></span>
+          </div>
+          <div class="category-tabs" role="group" aria-label="商品分類">
+            <button class="category-tab is-active" type="button" data-category="全部" aria-pressed="true">全部</button>
+            <button class="category-tab" type="button" data-category="電子產品" aria-pressed="false">⌁ 電子產品</button>
+            <button class="category-tab" type="button" data-category="生活用品" aria-pressed="false">⌂ 生活用品</button>
+            <button class="category-tab" type="button" data-category="周邊配件" aria-pressed="false">✳ 周邊配件</button>
+          </div>
+          <div class="product-grid" id="product-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="section-card shipping-card" id="shipping-progress" aria-labelledby="shipping-title">
+          <div class="shipping-icon" aria-hidden="true">🚚</div>
+          <div class="shipping-content">
+            <div class="shipping-title-row">
+              <h2 id="shipping-title">距離免運還差多少？</h2>
+              <span class="shipping-threshold">免運門檻 <strong id="shipping-threshold-value">NT$1,500</strong></span>
+            </div>
+            <p class="shipping-message" id="shipping-message">加入商品，看看離免運優惠有多近。</p>
+            <div class="progress-track" role="progressbar" aria-label="免運進度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span class="progress-fill" id="shipping-progress-fill"></span>
+            </div>
+            <div class="progress-meta"><span id="shipping-progress-label">NT$0 / NT$1,500</span><span id="shipping-percentage">0%</span></div>
+          </div>
+        </section>
+
+        <section class="section-card comparison-card" id="promotion-analysis" aria-labelledby="comparison-title">
+          <div class="section-heading">
+            <div><span class="section-kicker">SMART DEAL FINDER</span><h2 id="comparison-title">促銷方案比較</h2></div>
+            <span class="best-pill" id="best-plan-indicator">等待商品</span>
+          </div>
+          <p class="section-description">以目前商品試算各方案，優惠券會依可疊加規則一併計算。</p>
+          <div class="comparison-table-wrap">
+            <table class="comparison-table">
+              <thead><tr><th>促銷方案</th><th>折扣金額</th><th>折後商品金額</th><th>狀態</th></tr></thead>
+              <tbody id="comparison-body"></tbody>
+            </table>
+          </div>
+          <p class="comparison-note" id="comparison-note"></p>
+          <p class="comparison-rule">比較金額為套用單一結帳促銷及可疊加優惠券後的商品金額；運費依促銷前商品小計判定。</p>
+        </section>
+
+        <section class="section-card steps-card" id="how-it-works" aria-labelledby="steps-title">
+          <div class="section-heading">
+            <div><span class="section-kicker">CLEAR, STEP BY STEP</span><h2 id="steps-title">促銷計算過程</h2></div>
+            <button class="text-button" id="toggle-details" type="button" aria-expanded="false">查看詳細資訊 <span aria-hidden="true">⌄</span></button>
+          </div>
+          <ol class="calculation-steps" id="calculation-steps"></ol>
+          <div class="calculation-details" id="calculation-details" hidden></div>
+        </section>
+
+        <section class="help-note">
+          <span class="help-icon" aria-hidden="true">i</span>
+          <p>促銷可與固定金額折價券疊加；SAVE10 為單獨折扣，套用時會取代結帳促銷。免運依商品特價小計滿 NT$1,500 判定。</p>
+        </section>
+      </div>
+
+      <aside class="section-card cart-panel" id="cart-panel" aria-labelledby="cart-title">
+        <div class="cart-panel-heading">
+          <div><span class="section-kicker">YOUR SMART CART</span><h2 id="cart-title">購物車結帳試算</h2></div>
+          <button class="text-button clear-button" id="clear-cart" type="button">清空</button>
+        </div>
+        <div class="cart-count-line"><span class="cart-count-dot"></span><span id="cart-count">0 件商品</span><span class="muted" id="cart-unique-count">0 種品項</span></div>
+        <div class="cart-items" id="cart-items" aria-live="polite"></div>
+
+        <section class="promotion-section" aria-labelledby="promotion-title">
+          <div class="subsection-heading"><h3 id="promotion-title">促銷活動</h3><span class="muted">擇一使用</span></div>
+          <div class="promotion-tabs" role="tablist" aria-label="促銷活動類型">
+            <button class="promotion-tab is-active" id="tab-percent" type="button" role="tab" aria-selected="true" data-promotion="percent">全場折扣</button>
+            <button class="promotion-tab" id="tab-threshold" type="button" role="tab" aria-selected="false" data-promotion="threshold">滿額折抵</button>
+            <button class="promotion-tab" id="tab-bogo" type="button" role="tab" aria-selected="false" data-promotion="bogo">買一送一</button>
+            <button class="promotion-tab" id="tab-coupon" type="button" role="tab" aria-selected="false" data-promotion="coupon">優惠券</button>
+          </div>
+          <div class="promotion-options" id="promotion-options"></div>
+        </section>
+
+        <section class="coupon-section" aria-labelledby="coupon-title">
+          <div class="subsection-heading"><h3 id="coupon-title">輸入優惠碼</h3><span class="coupon-stacking">可疊加規則依優惠碼而定</span></div>
+          <form class="coupon-form" id="coupon-form">
+            <label class="sr-only" for="coupon-input">優惠券代碼</label>
+            <input id="coupon-input" type="text" autocomplete="off" placeholder="輸入優惠碼" maxlength="24">
+            <button class="apply-coupon-button" type="submit">套用</button>
+          </form>
+          <div class="coupon-feedback" id="coupon-feedback" role="status" aria-live="polite"></div>
+          <div class="applied-coupon" id="applied-coupon" hidden></div>
+        </section>
+
+        <section class="totals-section" aria-labelledby="totals-title">
+          <h3 class="subsection-title" id="totals-title">結帳金額明細</h3>
+          <div class="total-row"><span>商品原價總額</span><strong id="subtotal-original">NT$0</strong></div>
+          <div class="total-row discount-row"><span>商品促銷折扣</span><strong id="product-discount">− NT$0</strong></div>
+          <div class="total-row discount-row"><span id="campaign-line-label">結帳促銷折扣</span><strong id="campaign-discount">− NT$0</strong></div>
+          <div class="total-row discount-row"><span id="coupon-line-label">優惠券折抵</span><strong id="coupon-discount">− NT$0</strong></div>
+          <div class="total-row"><span>運費</span><strong id="shipping-cost">NT$80</strong></div>
+          <div class="total-divider"></div>
+          <div class="total-row payable-row"><span>最終結帳金額</span><strong id="grand-total">NT$0</strong></div>
+          <p class="savings-message" id="savings-message">加入商品，開始計算你的專屬優惠。</p>
+          <button class="checkout-button" id="checkout-button" type="button" disabled><span aria-hidden="true">🔒</span> 進行模擬結帳</button>
+          <p class="secure-note"><span aria-hidden="true">✓</span> 安全試算・不會進行真實付款</p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-topline"><span class="dialog-brand">SMARTCART <span>ORDER PREVIEW</span></span><button class="dialog-close" id="dialog-close" type="button" aria-label="關閉視窗">×</button></div>
+    <div class="dialog-content" id="dialog-content"></div>
+  </dialog>
+</body>
+</html>
